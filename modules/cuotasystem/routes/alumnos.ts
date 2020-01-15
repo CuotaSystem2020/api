@@ -35,12 +35,12 @@ router.get("/alumnoId/:id", function(req, res, next) {
 
 router.post("/alumno", function(req: any, res, next) {
   let alumno = new alumnos(req.body);
-
+  
   alumno.save(function(err, alumnoCreado) {
     if (err) {
       res.status(500).send(err);
     }
-
+    
     res.status(200).json(alumnoCreado);
   });
 });

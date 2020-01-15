@@ -1,6 +1,5 @@
 import * as mongoose from "mongoose";
 import * as constantes from "../../../utils/constantes";
-import * as contactoSchema from "../../tm/schemas/contacto";
 import * as escuelaSchema from "../../tm/schemas/escuela";
 import * as autorizadosSchema from "../../tm/schemas/autorizados";
 import * as hermanosSchema from "../schemas/hermanos";
@@ -12,7 +11,8 @@ export let alumnoSchema = new mongoose.Schema({
   fechaNacimiento: Date,
   direccion: { type: mongoose.SchemaTypes.Mixed },
   localidad: String,
-  contacto: [contactoSchema], // Telefono - Mail
+  telefono: Number,
+  mail: String,
   escuela: { type: escuelaSchema },
   grado: constantes.GRADO,
   libretaSanitaria: Boolean,
@@ -21,7 +21,7 @@ export let alumnoSchema = new mongoose.Schema({
   anoInicio: Number,
   autorizados: [autorizadosSchema],
   hermanos: [hermanosSchema],
-  observaciones: String,
+  observaciones: String,  
   alumnoImage: {
     size: String,
     path: String,
@@ -32,6 +32,6 @@ export let alumnoSchema = new mongoose.Schema({
     originalname: String,
     fieldname: String
   }
-});
+}, { timestamps: { createdAt: 'created_at' } });
 
 export let alumnos = mongoose.model("alumno", alumnoSchema, "alumnos");
