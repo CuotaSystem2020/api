@@ -23,7 +23,6 @@ router.get('/alumnos', function(req, res, next) {
 });
 
 router.get('/alumnos/:id', (req, res, next) => {
-  console.log("Reqqq: ", req.params.id);
 	let query = alumnos.findById(req.params.id);
 
 	query.exec(function(err, data) {
@@ -52,6 +51,40 @@ router.put('/alumno/:_id', function(req, res, next) {
 			return next(err);
 		}
 		res.status(200).json(alumno);
+	});
+});
+
+router.patch('/hermano', (req, res, next) => {
+	let idAlumno = req.body.idAlumno;
+
+	let hermano = {
+		_id: req.body.hermano._id,
+		nombre: req.body.hermano.nombre,
+		apellido: req.body.hermano.apellido,
+		documento: req.body.hermano.documento
+	};
+
+	alumnos.findById(idAlumno, function(err, dataLuis: any) {
+		dataLuis.hermanos.push(hermano);
+
+		dataLuis.save((error, hermanoCreado) => {
+			if (error) {
+				return next(error);
+			}
+
+			alumnos.findById(hermano._id, (err, dataSilvina: any) => {
+				dataSilvina.hermanos.push({
+					_id: dataLuis._id,
+					nombre: dataLuis.nombre,
+					apellido: dataLuis.apellido,
+					documento: dataLuis.documento
+				});
+
+				dataSilvina.save();
+			});
+
+			return res.json(hermanoCreado);
+		});
 	});
 });
 
