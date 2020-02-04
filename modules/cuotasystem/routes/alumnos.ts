@@ -1,6 +1,7 @@
 import * as express from 'express';
 import * as mongoose from 'mongoose';
 import { alumnos } from './../schemas/alumnos';
+import * as alumnoCtrl from './../controllers/alumnosController';
 
 var router = express.Router();
 
@@ -54,6 +55,7 @@ router.put('/alumno/:_id', function(req, res, next) {
 	});
 });
 
+// pasar al controlles
 router.patch('/hermano', (req, res, next) => {
 	let idAlumno = req.body.idAlumno;
 
@@ -82,10 +84,32 @@ router.patch('/hermano', (req, res, next) => {
 
 				dataSilvina.save();
 			});
-
+			console.log('Hermano: ', hermanoCreado);
 			return res.json(hermanoCreado);
 		});
 	});
+});
+
+router.patch('/alumno/:id', async (req: any, res, next) => {
+	const { id } = req.params;
+
+	const alumno: any = await alumnos.findById(id);
+	const hermano: any = await alumnos.findById(req.body.hermano._id);
+
+	switch (req.body.op) {
+		case 'deleteHermano':
+			alumno.hermanos = alumno.hermanos.filter((hermano) => hermano._id != req.body.hermano._id);
+			hermano.hermanos = hermano.hermanos.filter((hermano) => hermano._id != id);
+	}
+
+	await alumno.save((error, data) => {
+		if (error) {
+			return next(error);
+		}
+
+		res.status(200).json(data);
+	});
+	await hermano.save();
 });
 
 export = router;
