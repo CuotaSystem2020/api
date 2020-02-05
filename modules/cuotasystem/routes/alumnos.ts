@@ -40,8 +40,7 @@ router.post('/alumno', function(req: any, res, next) {
 	alumno.save(function(err, alumno) {
 		if (err) {
 			res.status(500).send(err);
-		}
-		console.log('Alumno: ', alumno);
+		}		
 		res.json(alumno);
 	});
 });
@@ -84,32 +83,19 @@ router.patch('/hermano', (req, res, next) => {
 
 				dataSilvina.save();
 			});
-			console.log('Hermano: ', hermanoCreado);
+			
 			return res.json(hermanoCreado);
 		});
 	});
 });
 
 router.patch('/alumno/:id', async (req: any, res, next) => {
-	const { id } = req.params;
-
-	const alumno: any = await alumnos.findById(id);
-	const hermano: any = await alumnos.findById(req.body.hermano._id);
-
 	switch (req.body.op) {
 		case 'deleteHermano':
-			alumno.hermanos = alumno.hermanos.filter((hermano) => hermano._id != req.body.hermano._id);
-			hermano.hermanos = hermano.hermanos.filter((hermano) => hermano._id != id);
+			let alumno = await alumnoCtrl.deleteHermano(req);
+			console.log("Alunnoo: ", alumno);
+			res.json(alumno);
 	}
-
-	await alumno.save((error, data) => {
-		if (error) {
-			return next(error);
-		}
-
-		res.status(200).json(data);
-	});
-	await hermano.save();
 });
 
 export = router;
